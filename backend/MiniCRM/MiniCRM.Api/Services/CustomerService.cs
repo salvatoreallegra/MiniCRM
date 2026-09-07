@@ -1,4 +1,5 @@
-﻿using MiniCRM.Api.Models;
+﻿using MiniCRM.Api.DTOs;
+using MiniCRM.Api.Models;
 
 namespace MiniCRM.Api.Services;
 
@@ -51,5 +52,22 @@ public class CustomerService : ICustomerService
             .ToList();
 
         return Task.FromResult(customers);
+    }
+    public Task<Customer> CreateCustomerAsync(CreateCustomerRequest request)
+    {
+        int nextId = _customers.Count == 0
+            ? 1
+            : _customers.Max(c => c.Id) + 1;
+
+        var customer = new Customer
+        {
+            Id = nextId,
+            Name = request.Name,
+            Email = request.Email
+        };
+
+        _customers.Add(customer);
+
+        return Task.FromResult(customer);
     }
 }

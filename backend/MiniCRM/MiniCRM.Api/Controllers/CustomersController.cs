@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using MiniCRM.Api.DTOs;
 using MiniCRM.Api.Models;
 using MiniCRM.Api.Services;
 
@@ -46,5 +47,18 @@ public class CustomersController : ControllerBase
             await _customerService.SearchCustomersAsync(search);
 
         return Ok(customers);
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<Customer>> CreateCustomer(
+    CreateCustomerRequest request)
+    {
+        Customer customer =
+            await _customerService.CreateCustomerAsync(request);
+
+        return CreatedAtAction(
+            nameof(GetCustomerById),
+            new { id = customer.Id },
+            customer);
     }
 }

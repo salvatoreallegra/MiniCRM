@@ -1,6 +1,9 @@
-@MiniCRM.Api_HostAddress = http://localhost:5008
+@MiniCRM_Api_HostAddress = https://localhost:7238
 
-GET {{MiniCRM.Api_HostAddress}}/weatherforecast/
-Accept: application/json
+POST {{MiniCRM_Api_HostAddress}}/api/customers
+Content-Type: application/json
 
-###
+{
+  "name": "Lisa Wilson",
+  "email": "lisa@example.com"
+}
