@@ -1,73 +1,64 @@
-﻿using MiniCRM.Api.DTOs;
+﻿using Microsoft.EntityFrameworkCore;
+using MiniCRM.Api.Data;
+using MiniCRM.Api.DTOs;
 using MiniCRM.Api.Models;
 
 namespace MiniCRM.Api.Services;
 
 public class CustomerService : ICustomerService
 {
-    private readonly List<Customer> _customers =
-    [
-        new Customer
-        {
-            Id = 1,
-            Name = "John Smith",
-            Email = "john@example.com"
-        },
+    private readonly AppDbContext _dbContext;
+    private readonly ILogger<CustomerService> _logger;
 
-        new Customer
-        {
-            Id = 2,
-            Name = "Sarah Jones",
-            Email = "sarah@example.com"
-        },
-
-        new Customer
-        {
-            Id = 3,
-            Name = "Mike Brown",
-            Email = "mike@example.com"
-        }
-    ];
-
-    public Task<List<Customer>> GetCustomersAsync()
+    public CustomerService(
+        AppDbContext dbContext,
+        ILogger<CustomerService> logger)
     {
-        return Task.FromResult(_customers);
+        _dbContext = dbContext;
+        _logger = logger;
     }
 
-    public Task<Customer?> GetCustomerByIdAsync(int id)
+    public async Task<List<Customer>> GetCustomersAsync()
     {
-        Customer? customer = _customers
-            .FirstOrDefault(c => c.Id == id);
-
-        return Task.FromResult(customer);
-    }
-
-    public Task<List<Customer>> SearchCustomersAsync(string search)
-    {
-        List<Customer> customers = _customers
-            .Where(c =>
-                c.Name.Contains(search, StringComparison.OrdinalIgnoreCase) ||
-                c.Email.Contains(search, StringComparison.OrdinalIgnoreCase))
+        return await _dbContext.Customers
             .OrderBy(c => c.Name)
-            .ToList();
-
-        return Task.FromResult(customers);
+            .ToListAsync();
     }
-    public Task<Customer> CreateCustomerAsync(CreateCustomerRequest request)
-    {
-        int nextId = _customers.Count == 0
-            ? 1
-            : _customers.Max(c => c.Id) + 1;
 
+    public async Task<Customer?> GetCustomerByIdAsync(int id)
+    {
+        return await _dbContext.Customers
+            .Include(c => c.Notes)
+            .FirstOrDefaultAsync(c => c.Id == id);
+    }
+
+    public async Task<List<Customer>> SearchCustomersAsync(string search)
+    {
+        return await _dbContext.Customers
+            .Where(c =>
+                c.Name.Contains(search) ||
+                c.Email.Contains(search))
+            .OrderBy(c => c.Name)
+            .ToListAsync();
+    }
+
+    public async Task<Customer> CreateCustomerAsync(
+        CreateCustomerRequest request)
+    {
         var customer = new Customer
         {
-            Id = nextId,
             Name = request.Name,
             Email = request.Email
         };
 
-        _customers.Add(customer);
+        _dbContext.Customers.Add(customer);
 
-        return Task.FromResult(customer);
+        await _dbContext.SaveChangesAsync();
+
+        _logger.LogInformation(
+            "Created customer {CustomerId}",
+            customer.Id);
+
+        return customer;
     }
 }

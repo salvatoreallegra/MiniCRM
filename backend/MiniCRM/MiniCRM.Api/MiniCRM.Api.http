@@ -7,3 +7,7 @@ Content-Type: application/json
   "name": "Lisa Wilson",
   "email": "lisa@example.com"
 }
+
+###
+GET {{MiniCRM_Api_HostAddress}}/api/customers
+Accept: application/json
