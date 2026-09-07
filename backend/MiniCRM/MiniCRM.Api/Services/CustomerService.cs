@@ -40,4 +40,16 @@ public class CustomerService : ICustomerService
 
         return Task.FromResult(customer);
     }
+
+    public Task<List<Customer>> SearchCustomersAsync(string search)
+    {
+        List<Customer> customers = _customers
+            .Where(c =>
+                c.Name.Contains(search, StringComparison.OrdinalIgnoreCase) ||
+                c.Email.Contains(search, StringComparison.OrdinalIgnoreCase))
+            .OrderBy(c => c.Name)
+            .ToList();
+
+        return Task.FromResult(customers);
+    }
 }

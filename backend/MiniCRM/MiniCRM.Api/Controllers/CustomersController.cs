@@ -37,4 +37,14 @@ public class CustomersController : ControllerBase
 
         return Ok(customer);
     }
+
+    [HttpGet("search")]
+    public async Task<ActionResult<List<Customer>>> SearchCustomers(
+    [FromQuery] string search)
+    {
+        List<Customer> customers =
+            await _customerService.SearchCustomersAsync(search);
+
+        return Ok(customers);
+    }
 }
