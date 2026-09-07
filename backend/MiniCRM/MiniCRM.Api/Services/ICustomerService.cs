@@ -5,7 +5,7 @@ namespace MiniCRM.Api.Services;
 
 public interface ICustomerService
 {
-    Task<List<Customer>> GetCustomersAsync();
+    Task<List<Customer>> GetCustomersAsync(int page,int pageSize);
 
     Task<Customer?> GetCustomerByIdAsync(int id);
 
@@ -17,7 +17,7 @@ public interface ICustomerService
 
     Task<Note?> AddNoteAsync(int customerId, CreateNoteRequest request);
 
-    Task<bool> UpdateCustomerAsync(int id, CreateCustomerRequest request);
+    Task<bool> UpdateCustomerAsync(int id,UpdateCustomerRequest request);
 
     Task<bool> DeleteCustomerAsync(int id);
 }
