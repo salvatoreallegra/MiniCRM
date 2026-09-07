@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MiniCRM.Api.Models;
+using MiniCRM.Api.Services;
 
 namespace MiniCRM.Api.Controllers;
 
@@ -7,15 +8,32 @@ namespace MiniCRM.Api.Controllers;
 [Route("api/[controller]")]
 public class CustomersController : ControllerBase
 {
-    [HttpGet]
-    public ActionResult<Customer> GetCustomer()
+    private readonly ICustomerService _customerService;
+
+    public CustomersController(ICustomerService customerService)
     {
-        var customer = new Customer
+        _customerService = customerService;
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<List<Customer>>> GetCustomers()
+    {
+        List<Customer> customers =
+            await _customerService.GetCustomersAsync();
+
+        return Ok(customers);
+    }
+
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<Customer>> GetCustomerById(int id)
+    {
+        Customer? customer =
+            await _customerService.GetCustomerByIdAsync(id);
+
+        if (customer is null)
         {
-            Id = 1,
-            Name = "John Smith",
-            Email = "john@example.com"
-        };
+            return NotFound();
+        }
 
         return Ok(customer);
     }
