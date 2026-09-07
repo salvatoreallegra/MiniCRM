@@ -61,4 +61,62 @@ public class CustomersController : ControllerBase
             new { id = customer.Id },
             customer);
     }
+
+    [HttpPost("{customerId:int}/notes")]
+    public async Task<ActionResult<Note>> AddNote(
+    int customerId,
+    CreateNoteRequest request)
+    {
+        Note? note =
+            await _customerService.AddNoteAsync(customerId, request);
+
+        if (note is null)
+        {
+            return NotFound();
+        }
+
+        return Ok(note);
+    }
+    [HttpGet("{id:int}/details")]
+    public async Task<ActionResult<CustomerDetailsResponse>> GetCustomerDetails(
+    int id)
+    {
+        CustomerDetailsResponse? customer =
+            await _customerService.GetCustomerDetailsAsync(id);
+
+        if (customer is null)
+        {
+            return NotFound();
+        }
+
+        return Ok(customer);
+    }
+    [HttpPut("{id:int}")]
+    public async Task<IActionResult> UpdateCustomer(
+    int id,
+    CreateCustomerRequest request)
+    {
+        bool updated =
+            await _customerService.UpdateCustomerAsync(id, request);
+
+        if (!updated)
+        {
+            return NotFound();
+        }
+
+        return NoContent();
+    }
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> DeleteCustomer(int id)
+    {
+        bool deleted =
+            await _customerService.DeleteCustomerAsync(id);
+
+        if (!deleted)
+        {
+            return NotFound();
+        }
+
+        return NoContent();
+    }
 }

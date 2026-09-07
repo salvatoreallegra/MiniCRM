@@ -61,4 +61,85 @@ public class CustomerService : ICustomerService
 
         return customer;
     }
+    public async Task<CustomerDetailsResponse?> GetCustomerDetailsAsync(int id)
+    {
+        return await _dbContext.Customers
+            .Where(c => c.Id == id)
+            .Select(c => new CustomerDetailsResponse
+            {
+                Id = c.Id,
+                Name = c.Name,
+                Email = c.Email,
+                Notes = c.Notes
+                    .OrderByDescending(n => n.CreatedAtUtc)
+                    .Select(n => new NoteResponse
+                    {
+                        Id = n.Id,
+                        Text = n.Text,
+                        CreatedAtUtc = n.CreatedAtUtc
+                    })
+                    .ToList()
+            })
+            .FirstOrDefaultAsync();
+    }
+    public async Task<Note?> AddNoteAsync(
+    int customerId,
+    CreateNoteRequest request)
+    {
+        bool customerExists = await _dbContext.Customers
+            .AnyAsync(c => c.Id == customerId);
+
+        if (!customerExists)
+        {
+            return null;
+        }
+
+        var note = new Note
+        {
+            CustomerId = customerId,
+            Text = request.Text,
+            CreatedAtUtc = DateTime.UtcNow
+        };
+
+        _dbContext.Notes.Add(note);
+
+        await _dbContext.SaveChangesAsync();
+
+        return note;
+    }
+    public async Task<bool> UpdateCustomerAsync(
+    int id,
+    CreateCustomerRequest request)
+    {
+        Customer? customer = await _dbContext.Customers
+            .FirstOrDefaultAsync(c => c.Id == id);
+
+        if (customer is null)
+        {
+            return false;
+        }
+
+        customer.Name = request.Name;
+        customer.Email = request.Email;
+
+        await _dbContext.SaveChangesAsync();
+
+        return true;
+    }
+    public async Task<bool> DeleteCustomerAsync(int id)
+    {
+        Customer? customer = await _dbContext.Customers
+            .FirstOrDefaultAsync(c => c.Id == id);
+
+        if (customer is null)
+        {
+            return false;
+        }
+
+        _dbContext.Customers.Remove(customer);
+
+        await _dbContext.SaveChangesAsync();
+
+        return true;
+    }
 }

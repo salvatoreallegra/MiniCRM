@@ -11,3 +11,23 @@ Content-Type: application/json
 ###
 GET {{MiniCRM_Api_HostAddress}}/api/customers
 Accept: application/json
+
+###
+POST {{MiniCRM_Api_HostAddress}}/api/customers/1/notes
+Content-Type: application/json
+
+{
+  "text": "Called customer about renewal."
+}
+
+###
+GET {{MiniCRM_Api_HostAddress}}/api/customers/1/details
+
+###
+PUT {{MiniCRM_Api_HostAddress}}/api/customers/1
+Content-Type: application/json
+
+{
+  "name": "John Smith Updated",
+  "email": "john.updated@example.com"
+}
