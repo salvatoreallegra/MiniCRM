@@ -3,25 +3,31 @@ import {
   getCustomers,
   getCustomerDetails,
   type Customer,
-  type CustomerDetails
+  type CustomerDetails,
+  type Note,
 } from "./api/customerApi";
 
 import CreateCustomerForm from "./components/CreateCustomerForm";
 import CustomerList from "./components/CustomerList";
+import CustomerDetailsComponent from "./components/CustomerDetails";
+import AddNoteForm from "./components/AddNoteForm";
 
 function App() {
-  const [customers, setCustomers] =
-    useState<Customer[]>([]);
+  const [customers, setCustomers] = useState<Customer[]>([]);
 
   const [selectedCustomer, setSelectedCustomer] =
     useState<CustomerDetails | null>(null);
 
-  const [error, setError] =
-    useState<string>("");
+  const [error, setError] = useState<string>("");
+
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     async function loadCustomers() {
       try {
+        setLoading(true);
+        setError("");
+
         const data = await getCustomers();
 
         setCustomers(data);
@@ -33,41 +39,49 @@ function App() {
         } else {
           setError("Could not load customers.");
         }
+      } finally {
+        setLoading(false);
       }
     }
 
     loadCustomers();
   }, []);
 
-  function handleCustomerCreated(
-    customer: Customer
-  ) {
+  function handleCustomerCreated(customer: Customer) {
     setCustomers((currentCustomers) => [
       ...currentCustomers,
-      customer
+      customer,
     ]);
   }
 
-  async function handleCustomerSelected(
-    customerId: number
-  ) {
+  async function handleCustomerSelected(customerId: number) {
     try {
-      const customer =
-        await getCustomerDetails(customerId);
+      setLoading(true);
+      setError("");
+
+      const customer = await getCustomerDetails(customerId);
 
       setSelectedCustomer(customer);
-
-      console.log(
-        "Selected customer:",
-        customer
-      );
     } catch (error) {
       console.error(error);
 
-      setError(
-        "Could not load customer details."
-      );
+      setError("Could not load customer details.");
+    } finally {
+      setLoading(false);
     }
+  }
+
+  function handleNoteCreated(note: Note) {
+    setSelectedCustomer((currentCustomer) => {
+      if (currentCustomer === null) {
+        return null;
+      }
+
+      return {
+        ...currentCustomer,
+        notes: [...currentCustomer.notes, note],
+      };
+    });
   }
 
   return (
@@ -80,17 +94,24 @@ function App() {
 
       {error && <p>{error}</p>}
 
+      {loading && <p>Loading...</p>}
+
       <CustomerList
         customers={customers}
-        onCustomerSelected={
-          handleCustomerSelected
-        }
+        onCustomerSelected={handleCustomerSelected}
       />
 
       {selectedCustomer && (
-        <div>
-          Selected: {selectedCustomer.name}
-        </div>
+        <>
+          <CustomerDetailsComponent
+            customer={selectedCustomer}
+          />
+
+          <AddNoteForm
+            customerId={selectedCustomer.id}
+            onNoteCreated={handleNoteCreated}
+          />
+        </>
       )}
     </div>
   );
