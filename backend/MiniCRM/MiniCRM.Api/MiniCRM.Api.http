@@ -31,3 +31,6 @@ Content-Type: application/json
   "name": "John Smith Updated",
   "email": "john.updated@example.com"
 }
+
+### Get paged customers
+GET {{MiniCRM_Api_HostAddress}}/api/customers?page=1&pageSize=100
