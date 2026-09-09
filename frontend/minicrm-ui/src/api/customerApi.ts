@@ -26,11 +26,19 @@ export interface CreateNoteRequest {
   text: string;
 }
 
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
 const API_BASE_URL = "https://localhost:7238";
 
 export async function getCustomers(): Promise<Customer[]> {
   const response = await fetch(
-    `${API_BASE_URL}/api/customers?page=1&pageSize=100`
+    `${API_BASE_URL}/api/customers?page=1&pageSize=100`,
+    {
+      credentials: "include",
+    }
   );
 
   if (!response.ok) {
@@ -50,9 +58,10 @@ export async function createCustomer(
     {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify(request)
+      credentials: "include",
+      body: JSON.stringify(request),
     }
   );
 
@@ -69,7 +78,10 @@ export async function getCustomerDetails(
   id: number
 ): Promise<CustomerDetails> {
   const response = await fetch(
-    `${API_BASE_URL}/api/customers/${id}/details`
+    `${API_BASE_URL}/api/customers/${id}/details`,
+    {
+      credentials: "include",
+    }
   );
 
   if (!response.ok) {
@@ -90,9 +102,10 @@ export async function createNote(
     {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify(request)
+      credentials: "include",
+      body: JSON.stringify(request),
     }
   );
 
@@ -103,4 +116,26 @@ export async function createNote(
   }
 
   return await response.json();
+}
+
+export async function login(
+  request: LoginRequest
+): Promise<void> {
+  const response = await fetch(
+    `${API_BASE_URL}/login?useCookies=true`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify(request),
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(
+      `Login failed: ${response.status}`
+    );
+  }
 }

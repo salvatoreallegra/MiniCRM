@@ -7,22 +7,33 @@ import {
   type Note,
 } from "./api/customerApi";
 
+import LoginForm from "./components/LoginForm";
 import CreateCustomerForm from "./components/CreateCustomerForm";
 import CustomerList from "./components/CustomerList";
 import CustomerDetailsComponent from "./components/CustomerDetails";
 import AddNoteForm from "./components/AddNoteForm";
 
 function App() {
-  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [loggedIn, setLoggedIn] =
+    useState<boolean>(false);
+
+  const [customers, setCustomers] =
+    useState<Customer[]>([]);
 
   const [selectedCustomer, setSelectedCustomer] =
     useState<CustomerDetails | null>(null);
 
-  const [error, setError] = useState<string>("");
+  const [error, setError] =
+    useState<string>("");
 
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] =
+    useState<boolean>(false);
 
   useEffect(() => {
+    if (!loggedIn) {
+      return;
+    }
+
     async function loadCustomers() {
       try {
         setLoading(true);
@@ -45,27 +56,34 @@ function App() {
     }
 
     loadCustomers();
-  }, []);
+  }, [loggedIn]);
 
-  function handleCustomerCreated(customer: Customer) {
+  function handleCustomerCreated(
+    customer: Customer
+  ) {
     setCustomers((currentCustomers) => [
       ...currentCustomers,
       customer,
     ]);
   }
 
-  async function handleCustomerSelected(customerId: number) {
+  async function handleCustomerSelected(
+    customerId: number
+  ) {
     try {
       setLoading(true);
       setError("");
 
-      const customer = await getCustomerDetails(customerId);
+      const customer =
+        await getCustomerDetails(customerId);
 
       setSelectedCustomer(customer);
     } catch (error) {
       console.error(error);
 
-      setError("Could not load customer details.");
+      setError(
+        "Could not load customer details."
+      );
     } finally {
       setLoading(false);
     }
@@ -79,9 +97,22 @@ function App() {
 
       return {
         ...currentCustomer,
-        notes: [...currentCustomer.notes, note],
+        notes: [
+          ...currentCustomer.notes,
+          note,
+        ],
       };
     });
+  }
+
+  if (!loggedIn) {
+    return (
+      <LoginForm
+        onLoginSuccess={() =>
+          setLoggedIn(true)
+        }
+      />
+    );
   }
 
   return (
@@ -98,7 +129,9 @@ function App() {
 
       <CustomerList
         customers={customers}
-        onCustomerSelected={handleCustomerSelected}
+        onCustomerSelected={
+          handleCustomerSelected
+        }
       />
 
       {selectedCustomer && (
