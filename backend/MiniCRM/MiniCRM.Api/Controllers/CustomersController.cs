@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MiniCRM.Api.DTOs;
 using MiniCRM.Api.Models;
 using MiniCRM.Api.Services;
@@ -7,6 +8,7 @@ namespace MiniCRM.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class CustomersController : ControllerBase
 {
     private readonly ICustomerService _customerService;

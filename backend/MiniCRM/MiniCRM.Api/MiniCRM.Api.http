@@ -34,3 +34,24 @@ Content-Type: application/json
 
 ### Get paged customers
 GET {{MiniCRM_Api_HostAddress}}/api/customers?page=1&pageSize=100
+
+### Register user
+POST {{MiniCRM_Api_HostAddress}}/register
+Content-Type: application/json
+
+{
+  "email": "salallegra@gmail.com",
+  "password": "JediKnight1@7775"
+}
+
+### Login
+POST {{MiniCRM_Api_HostAddress}}/login?useCookies=true
+Content-Type: application/json
+
+{
+  "email": "admin@minicrm.com",
+  "password": "Test123!"
+}
+
+### Get customers
+GET {{MiniCRM_Api_HostAddress}}/api/customers?page=1&pageSize=100
