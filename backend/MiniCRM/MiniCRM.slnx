@@ -1,3 +1,4 @@
 <Solution>
   <Project Path="MiniCRM.Api/MiniCRM.Api.csproj" />
+  <Project Path="MiniCRM.Tests/MiniCRM.Tests.csproj" Id="0017f760-a753-439f-b5c5-b67dc1bf9990" />
 </Solution>
