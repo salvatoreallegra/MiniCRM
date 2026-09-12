@@ -55,3 +55,13 @@ Content-Type: application/json
 
 ### Get customers
 GET {{MiniCRM_Api_HostAddress}}/api/customers?page=1&pageSize=100
+
+###
+
+POST https://minicrmapi20260909123711-dtdub4fefbcmdtcf.westus3-01.azurewebsites.net/register
+Content-Type: application/json
+
+{
+  "email": "admin@minicrm.com",
+  "password": "Test123!"
+}
