@@ -1,0 +1,66 @@
+name: Build and deploy ASP.Net Core app to Azure Web App - MiniCRMApi20260909123711
+
+on:
+  push:
+    branches:
+      - develop
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.x"
+
+      - name: Restore dependencies
+        run: dotnet restore ./backend/MiniCRM.sln
+
+      - name: Build
+        run: dotnet build ./backend/MiniCRM.sln --configuration Release --no-restore
+
+      - name: Publish API
+        run: dotnet publish ./backend/MiniCRM.Api/MiniCRM.Api.csproj --configuration Release --no-build --output "${{ env.DOTNET_ROOT }}/myapp"
+
+      - name: Upload artifact for deployment job
+        uses: actions/upload-artifact@v4
+        with:
+          name: .net-app
+          path: ${{ env.DOTNET_ROOT }}/myapp
+
+  deploy:
+    runs-on: windows-latest
+    needs: build
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v4
+        with:
+          name: .net-app
+
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_3553465795134AC3B1EFC78F13CCCECB }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_BC8FE9F5B4054E5E8F619BC250F555DC }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_6944730B92E64EEB842AF7B22C567242 }}
+
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: "MiniCRMApi20260909123711"
+          slot-name: "Production"
+          package: .
