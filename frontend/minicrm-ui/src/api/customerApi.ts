@@ -31,7 +31,8 @@ export interface LoginRequest {
   password: string;
 }
 
-const API_BASE_URL = "https://localhost:7238";
+//const API_BASE_URL = "https://localhost:7238";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export async function getCustomers(): Promise<Customer[]> {
   const response = await fetch(
