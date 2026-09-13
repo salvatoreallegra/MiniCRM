@@ -23,13 +23,13 @@ jobs:
           dotnet-version: "10.x"
 
       - name: Restore dependencies
-        run: dotnet restore ./backend/MiniCRM.sln
+        run: dotnet restore ./backend/MiniCRM/MiniCRM.slnx
 
       - name: Build
-        run: dotnet build ./backend/MiniCRM.sln --configuration Release --no-restore
+        run: dotnet build ./backend/MiniCRM/MiniCRM.slnx --configuration Release --no-restore
 
       - name: Publish API
-        run: dotnet publish ./backend/MiniCRM.Api/MiniCRM.Api.csproj --configuration Release --no-build --output "${{ env.DOTNET_ROOT }}/myapp"
+        run: dotnet publish ./backend/MiniCRM/MiniCRM.Api/MiniCRM.Api.csproj --configuration Release --no-build --output "${{ env.DOTNET_ROOT }}/myapp"
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
