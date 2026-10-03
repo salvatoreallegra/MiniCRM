@@ -1,0 +1,11 @@
+# For more info on HTTP files go to https://aka.ms/vs/httpfile
+@baseUrl = https://localhost:32769
+
+### Login
+POST {{baseUrl}}/login?useCookies=true
+Content-Type: application/json
+
+{
+  "email": "admin@minicrm.com",
+  "password": "Test123!"
+}
