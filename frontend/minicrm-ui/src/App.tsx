@@ -12,9 +12,13 @@ import CreateCustomerForm from "./components/CreateCustomerForm";
 import CustomerList from "./components/CustomerList";
 import CustomerDetailsComponent from "./components/CustomerDetails";
 import AddNoteForm from "./components/AddNoteForm";
+import HomePage from "./components/HomePage";
 
 function App() {
   const [loggedIn, setLoggedIn] =
+    useState<boolean>(false);
+
+  const [showLogin, setShowLogin] =
     useState<boolean>(false);
 
   const [customers, setCustomers] =
@@ -105,15 +109,19 @@ function App() {
     });
   }
 
-  if (!loggedIn) {
+if (!loggedIn && !showLogin) {
+    return <HomePage />;
+}
+
+if (!loggedIn) {
     return (
-      <LoginForm
-        onLoginSuccess={() =>
-          setLoggedIn(true)
-        }
-      />
+        <LoginForm
+            onLoginSuccess={() =>
+                setLoggedIn(true)
+            }
+        />
     );
-  }
+}
 
   return (
     <div>
