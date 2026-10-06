@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 function HomePage() {
     return (
         <div>
@@ -5,7 +7,7 @@ function HomePage() {
 
             <p>Simple customer management.</p>
 
-            <button>Login</button>
+            <Link to="/login">Login</Link>
         </div>
     );
 }
