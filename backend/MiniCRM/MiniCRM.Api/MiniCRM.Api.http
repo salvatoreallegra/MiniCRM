@@ -1,12 +1,6 @@
 @MiniCRM_Api_HostAddress = https://localhost:7238
 
-POST {{MiniCRM_Api_HostAddress}}/api/customers
-Content-Type: application/json
 
-{
-  "name": "Lisa Wilson",
-  "email": "lisa@example.com"
-}
 
 ###
 GET {{MiniCRM_Api_HostAddress}}/api/customers
@@ -35,14 +29,7 @@ Content-Type: application/json
 ### Get paged customers
 GET {{MiniCRM_Api_HostAddress}}/api/customers?page=1&pageSize=100
 
-### Register user
-POST {{MiniCRM_Api_HostAddress}}/register
-Content-Type: application/json
 
-{
-  "email": "salallegra@gmail.com",
-  "password": "JediKnight1@7775"
-}
 
 ### Login
 POST {{MiniCRM_Api_HostAddress}}/login?useCookies=true
@@ -57,11 +44,3 @@ Content-Type: application/json
 GET {{MiniCRM_Api_HostAddress}}/api/customers?page=1&pageSize=100
 
 ###
-
-POST https://minicrmapi20260909123711-dtdub4fefbcmdtcf.westus3-01.azurewebsites.net/register
-Content-Type: application/json
-
-{
-  "email": "admin@minicrm.com",
-  "password": "Test123!"
-}
