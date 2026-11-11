@@ -1,18 +1,17 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using MiniCRM.Api.Models;
 
 namespace MiniCRM.Api.Data;
 
-public class AppDbContext : DbContext
+public class AppDbContext : IdentityDbContext<ApplicationUser>
 {
-    public AppDbContext(
-        DbContextOptions<AppDbContext> options)
+    public AppDbContext(DbContextOptions<AppDbContext> options)
         : base(options)
     {
     }
 
     public DbSet<Customer> Customers => Set<Customer>();
-
     public DbSet<Note> Notes => Set<Note>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -22,5 +21,8 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<Customer>()
             .HasIndex(c => c.Email)
             .IsUnique();
+
+        modelBuilder.Entity<Note>()
+            .HasIndex(n => n.CustomerId);
     }
 }

@@ -18,10 +18,15 @@ public class CustomerService : ICustomerService
         _logger = logger;
     }
 
-    public async Task<List<Customer>> GetCustomersAsync()
+    public async Task<List<Customer>> GetCustomersAsync(
+    int page,
+    int pageSize)
     {
         return await _dbContext.Customers
-            .OrderBy(c => c.Name)
+            .AsNoTracking()
+            .OrderBy(c => c.Id)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
             .ToListAsync();
     }
 
@@ -109,7 +114,7 @@ public class CustomerService : ICustomerService
     }
     public async Task<bool> UpdateCustomerAsync(
     int id,
-    CreateCustomerRequest request)
+    UpdateCustomerRequest request)
     {
         Customer? customer = await _dbContext.Customers
             .FirstOrDefaultAsync(c => c.Id == id);

@@ -1,12 +1,6 @@
 @MiniCRM_Api_HostAddress = https://localhost:7238
 
-POST {{MiniCRM_Api_HostAddress}}/api/customers
-Content-Type: application/json
 
-{
-  "name": "Lisa Wilson",
-  "email": "lisa@example.com"
-}
 
 ###
 GET {{MiniCRM_Api_HostAddress}}/api/customers
@@ -31,3 +25,22 @@ Content-Type: application/json
   "name": "John Smith Updated",
   "email": "john.updated@example.com"
 }
+
+### Get paged customers
+GET {{MiniCRM_Api_HostAddress}}/api/customers?page=1&pageSize=100
+
+
+
+### Login
+POST {{MiniCRM_Api_HostAddress}}/login?useCookies=true
+Content-Type: application/json
+
+{
+  "email": "admin@minicrm.com",
+  "password": "Test123!"
+}
+
+### Get customers
+GET {{MiniCRM_Api_HostAddress}}/api/customers?page=1&pageSize=100
+
+###

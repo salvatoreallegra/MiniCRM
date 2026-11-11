@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MiniCRM.Api.DTOs;
 using MiniCRM.Api.Models;
 using MiniCRM.Api.Services;
@@ -7,6 +8,7 @@ namespace MiniCRM.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class CustomersController : ControllerBase
 {
     private readonly ICustomerService _customerService;
@@ -17,10 +19,25 @@ public class CustomersController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<Customer>>> GetCustomers()
+    public async Task<ActionResult<List<Customer>>> GetCustomers(
+    [FromQuery] int page = 1,
+    [FromQuery] int pageSize = 10)
     {
+        if (page < 1)
+        {
+            return BadRequest("Page must be at least 1.");
+        }
+
+        if (pageSize < 1 || pageSize > 100)
+        {
+            return BadRequest(
+                "Page size must be between 1 and 100.");
+        }
+
         List<Customer> customers =
-            await _customerService.GetCustomersAsync();
+            await _customerService.GetCustomersAsync(
+                page,
+                pageSize);
 
         return Ok(customers);
     }
@@ -94,7 +111,7 @@ public class CustomersController : ControllerBase
     [HttpPut("{id:int}")]
     public async Task<IActionResult> UpdateCustomer(
     int id,
-    CreateCustomerRequest request)
+    UpdateCustomerRequest request)
     {
         bool updated =
             await _customerService.UpdateCustomerAsync(id, request);
